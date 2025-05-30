@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/kaipov24/scaffold-api/internal/app"
+	"github.com/kaipov24/scaffold-api/internal/routes"
 )
 
 func main() {
@@ -21,10 +22,10 @@ func main() {
 
 	app.Logger.Printf("We are running on %d\n", port)
 
-	http.HandleFunc("/health", HealthCheck)
-
+	r := routes.SetupRoutes(app)
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", port),
+		Handler:      r,
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 30 * time.Second,
@@ -34,8 +35,4 @@ func main() {
 	if err != nil {
 		app.Logger.Fatal(err)
 	}
-}
-
-func HealthCheck(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Status is available")
 }
